@@ -10,6 +10,7 @@ struct Node {
 void insertAtPosition(Node*& head, int data, int position) {
     Node* newNode = new Node{data, nullptr};
 
+    // Insertion at head
     if (position == 0) {
         newNode->next = head;
         head = newNode;
@@ -21,11 +22,16 @@ void insertAtPosition(Node*& head, int data, int position) {
         temp = temp->next;
     }
 
-    if (temp == nullptr) return;
+    // If position is invalid, clean up the allocated node
+    if (temp == nullptr) {
+        delete newNode; // prevent memory leak
+        return;
+    }
 
     newNode->next = temp->next;
     temp->next = newNode;
 }
+
 
 2. What Was the Need of `delete` Keyword in the Code?
 
