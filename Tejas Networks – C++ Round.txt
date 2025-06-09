@@ -1,0 +1,154 @@
+Tejas Networks – C++ Round(5G core wireless Test Engineer)
+
+1. OOPS (Object-Oriented Programming)
+
+Object-Oriented Programming is a paradigm based on the concept of objects. It has four main principles:
+
+- Encapsulation: Binding data and methods together.
+- Abstraction: Hiding implementation details and exposing functionality.
+- Inheritance: Reusing code through hierarchies.
+- Polymorphism: Using one interface for multiple implementations.
+
+2. Class and Objects
+
+A class is a blueprint; an object is an instance of a class.
+
+Example:
+class Car {
+public:
+    string brand;
+    void honk() {
+        cout << "Beep, beep!" << endl;
+    }
+};
+
+int main() {
+    Car myCar;
+    myCar.brand = "Toyota";
+    myCar.honk();
+    return 0;
+}
+
+3. Static Polymorphism and Dynamic Polymorphism
+
+- Static polymorphism: Compile-time (e.g., function overloading)
+- Dynamic polymorphism: Run-time (e.g., virtual functions)
+
+Example:
+class Base {
+public:
+    virtual void display() { cout << "Base display" << endl; }
+};
+
+class Derived : public Base {
+public:
+    void display() override { cout << "Derived display" << endl; }
+};
+
+int main() {
+    Base* basePtr;
+    Derived derivedObj;
+    basePtr = &derivedObj;
+    basePtr->display();  // Output: Derived display
+    return 0;
+}
+
+4. Global Variables – Where Declared
+
+Global variables are declared outside all functions, at file scope.
+
+Example:
+int globalVar = 10;
+
+void display() {
+    cout << globalVar << endl;
+}
+
+int main() {
+    display();
+    return 0;
+}
+
+5. Static Keyword, Extern
+
+- static: Limits scope to file/function
+- extern: Declares external variable
+
+Example:
+// File1.cpp
+static int staticVar = 5;
+extern int externVar;
+
+// File2.cpp
+extern int externVar;
+
+6. Operator Overloading
+
+Used to define custom behavior for operators in user-defined types.
+
+Example:
+class Complex {
+public:
+    int real, imag;
+    Complex operator + (const Complex& obj) {
+        Complex temp;
+        temp.real = real + obj.real;
+        temp.imag = imag + obj.imag;
+        return temp;
+    }
+};
+
+7. Protected
+
+Protected members are accessible within class and derived classes.
+
+Example:
+class Base {
+protected:
+    int x;
+};
+
+class Derived : public Base {
+    void setX(int val) { x = val; }
+};
+
+8. Friend Function
+
+Grants non-member functions access to private/protected members.
+
+Example:
+class Box {
+private:
+    int length;
+public:
+    Box() : length(10) {}
+    friend void printLength(Box& b);
+};
+
+void printLength(Box& b) {
+    cout << "Length: " << b.length << endl;
+}
+
+9. Inline Function
+
+Compiler replaces function call with function code.
+
+Example:
+inline int square(int x) {
+    return x * x;
+}
+
+10. Print int x = 12346 as 1 2 3 4 6
+
+Example:
+int x = 12346;
+int rev = 0;
+while (x != 0) {
+    rev = rev * 10 + x % 10;
+    x /= 10;
+}
+while (rev != 0) {
+    cout << rev % 10 << " ";
+    rev /= 10;
+}
+// Output: 1 2 3 4 6

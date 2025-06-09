@@ -1,0 +1,318 @@
+Benison Technologies – Interview Preparation
+
+===============================================
+FIRST ROUND: Technical 1
+===============================================
+
+1. Run-time Polymorphism (Code)
+
+Polymorphism at runtime is achieved using virtual functions.
+
+Example:
+class Base {
+public:
+    virtual void show() { cout << "Base" << endl; }
+};
+
+class Derived : public Base {
+public:
+    void show() override { cout << "Derived" << endl; }
+};
+
+int main() {
+    Base* b = new Derived();
+    b->show();  // Output: Derived
+}
+
+2. What Happens When Run-time Binding
+
+When runtime binding occurs, the compiler uses vtable and vptr to decide which method to call based on the object type at runtime, not compile-time.
+
+3. Vtable and Vptr
+
+- Vtable: A table maintained per class that contains function pointers to virtual functions.
+- Vptr: A hidden pointer in every object of a class having virtual functions; it points to the vtable of the object’s actual class.
+
+4. Pure Virtual Function (Implementation)
+
+A pure virtual function is declared as:
+virtual void func() = 0;
+
+It has no implementation in the base class and must be overridden in derived class.
+
+5. What is Abstract Class
+
+A class with at least one pure virtual function is called an abstract class. It cannot be instantiated directly.
+
+6. What If Child Class Isn't Defined, If Parent Class is Pure Abstract Class
+
+If a derived class does not override all pure virtual functions, it remains abstract and also cannot be instantiated.
+
+7. Can You Instantiate Private Constructor?
+
+No, private constructors prevent instantiation from outside the class. It is typically used in Singleton design pattern.
+
+8. Singleton Class Implementation
+
+class Singleton {
+private:
+    static Singleton* instance;
+    Singleton() {}
+public:
+    static Singleton* getInstance() {
+        if (!instance)
+            instance = new Singleton();
+        return instance;
+    }
+};
+
+Singleton* Singleton::instance = nullptr;
+
+9. What If Two Threads Go to Access the Resource
+
+This can lead to a race condition. Synchronization mechanisms like mutex must be used to protect critical sections.
+
+10. What If the API is Called Twice
+
+It may lead to duplicate or conflicting operations. One solution is to make the API idempotent or use flags to prevent re-execution.
+
+11. Implement Mutex to Handle This Case
+
+#include <mutex>
+std::mutex mtx;
+
+void accessResource() {
+    mtx.lock();
+    // critical section
+    mtx.unlock();
+}
+
+12. Deep Copy and Shallow Copy Implementation
+
+Shallow Copy: Copies pointers, shared memory.
+Deep Copy: Copies the actual content to a new memory.
+
+Example:
+class MyClass {
+private:
+    int* data;
+public:
+    MyClass(int val) { data = new int(val); }
+
+    // Deep copy constructor
+    MyClass(const MyClass& obj) {
+        data = new int(*obj.data);
+    }
+
+    ~MyClass() { delete data; }
+};
+
+13. Assignment Operator Overloading in Main Function
+
+Example:
+class MyClass {
+private:
+    int* data;
+public:
+    MyClass& operator=(const MyClass& obj) {
+        if (this != &obj) {
+            delete data;
+            data = new int(*obj.data);
+        }
+        return *this;
+    }
+};
+
+14. Difference Between Copy Constructor and Copy Assignment
+
+- Copy Constructor: Used to initialize a new object from an existing one.
+- Copy Assignment: Used to assign values between existing objects.
+
+15. LinkedList – Delete the Given Position Node
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+void deleteNode(Node*& head, int position) {
+    if (!head) return;
+    Node* temp = head;
+
+    if (position == 0) {
+        head = head->next;
+        delete temp;
+        return;
+    }
+
+    for (int i = 0; temp != nullptr && i < position - 1; i++)
+        temp = temp->next;
+
+    if (!temp || !temp->next) return;
+
+    Node* next = temp->next->next;
+    delete temp->next;
+    temp->next = next;
+}
+
+===============================================
+SECOND ROUND: Technical 2
+===============================================
+
+1. Linux: System Calls and What Happens
+
+System calls are interface methods between user and kernel space. When called, CPU switches to kernel mode and executes the request.
+
+2. What Happens When `ls -foldername` is Run
+
+- Shell parses command
+- Forks a new process
+- Executes `ls` binary
+- Calls system calls like `opendir()`, `readdir()`, and `stat()`
+
+3. Difference Between Mutex and Binary Semaphore
+
+- Mutex is ownership-based (only owner can release).
+- Binary semaphore is signaling-based (any process/thread can release).
+
+4. Virtual Destructor – Why Needed? Show!
+
+If base class destructor is not virtual, deleting derived object using base pointer leads to incomplete cleanup.
+
+Example:
+class Base {
+public:
+    virtual ~Base() { cout << "Base destroyed\n"; }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() { cout << "Derived destroyed\n"; }
+};
+
+5. Two Modules, API in Module 1 Needed in Module 2 Without Modification
+
+Design API as an interface (abstract class) and include a header-only abstraction. Use interface pointers to interact.
+
+6. Global Variable – Where Stored in Memory
+
+Global variables are stored in the **Data Segment** of memory, specifically in:
+- `.data` (initialized)
+- `.bss` (uninitialized)
+
+7. Where is Code Stored in Memory
+
+The code (text) is stored in the **Text Segment** of memory layout.
+
+8. What Do You Know About Heap Memory
+
+Heap memory is dynamically allocated at runtime using `new` or `malloc()`, and must be freed manually.
+
+9. Inheritance vs Composition
+
+- Inheritance: "Is-A" relationship, code reuse through base class.
+- Composition: "Has-A" relationship, includes objects of other classes.
+
+10. RAII (Resource Acquisition Is Initialization)
+
+RAII ties resource allocation to object lifetime. When an object goes out of scope, its destructor releases the resource.
+
+Example:
+class FileHandler {
+    FILE* f;
+public:
+    FileHandler(const char* name) { f = fopen(name, "r"); }
+    ~FileHandler() { fclose(f); }
+};
+
+11. LinkedList – Sort Odds and Evens Separately (No Vector/Array)
+
+void sortOddEven(Node* head) {
+    Node *oddHead = nullptr, *evenHead = nullptr;
+    Node *oddTail = nullptr, *evenTail = nullptr;
+
+    while (head) {
+        Node* next = head->next;
+        head->next = nullptr;
+
+        if (head->data % 2 == 0) {
+            if (!evenHead) evenHead = evenTail = head;
+            else {
+                evenTail->next = head;
+                evenTail = evenTail->next;
+            }
+        } else {
+            if (!oddHead) oddHead = oddTail = head;
+            else {
+                oddTail->next = head;
+                oddTail = oddTail->next;
+            }
+        }
+        head = next;
+    }
+
+    if (oddTail) oddTail->next = evenHead;
+    head = oddHead ? oddHead : evenHead;
+}
+
+===============================================
+THIRD ROUND: Technical + Managerial
+===============================================
+
+1. How is Debugging Done?
+
+Debugging is done using tools like `gdb`, `valgrind`, and log-based analysis. Set breakpoints, step through code, inspect memory/registers.
+
+2. How Do You Write Story Points From Logs?
+
+Compare time-stamped logs from source and destination. Analyze event sequences and durations to define the workflow (story).
+
+3. How Would You Handle IPC Issues?
+
+Check for:
+- Deadlocks
+- Unread messages
+- Buffer overflows
+Use synchronization techniques like semaphores, shared memory, pipes, or message queues.
+
+4. What’s Log Sequencing?
+
+Log sequencing is analyzing logs in temporal order to trace execution flow and pinpoint failure or behavior patterns.
+
+5. Why Abstraction Was Introduced? Abstraction vs Encapsulation
+
+- **Abstraction** hides complexity by exposing only relevant details.
+- **Encapsulation** binds data and functions, protecting internal state.
+
+6. Types of Polymorphism
+
+- Compile-Time: Function/Operator Overloading
+- Run-Time: Virtual Functions (Overriding)
+
+7. Scenario-Based Polymorphism Question
+
+Use polymorphism when a base class pointer or reference can call derived class methods using `virtual`.
+
+8. If a Function is Declared in Class A and Defined in Class B
+
+This isn’t valid. Member functions must be defined in the same class (or namespace scope) they are declared in.
+
+9. Why Virtual is Needed if Function Overloading Exists?
+
+Function overloading is compile-time and based on parameters. Virtual functions resolve to the right function at run-time based on object type.
+
+10. Friend Function vs Virtual Function
+
+- Friend: Has access to private/protected data but is not a class member.
+- Virtual: Enables run-time polymorphism, works through class hierarchy.
+
+11. Scope of Global Variable
+
+Global variables are accessible throughout the program and persist for the lifetime of the program. Scope is file-level (or program-wide with `extern`).
+
+12. Network Related: IPv4/IPv6, TCP/IP, OSI Layer
+
+- IPv4: 32-bit addressing (e.g., 192.168.1.1)
+- IPv6: 128-bit addressing, more secure, future-proof
+- TCP/IP: 4-layer model (Link, Internet, Transport, Application)
+- OSI: 7-layer model (Physical
