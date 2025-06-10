@@ -152,3 +152,11 @@ while (rev != 0) {
     rev /= 10;
 }
 // Output: 1 2 3 4 6
+
+Explanation:
+
+We first reverse the number so we can print the digits from left to right.
+Then, we extract digits one by one using modulo % and division /, 
+and print them with a space in between.
+
+
